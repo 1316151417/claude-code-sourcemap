@@ -100,3 +100,14 @@ class GrepOutput(BaseModel):
     content: Optional[str] = None
     num_lines: Optional[int] = None
     num_matches: Optional[int] = None
+
+
+class RipgrepResult(BaseModel):
+    """Result from run_ripgrep."""
+
+    mode: Literal["content", "files_with_matches", "count"]
+    filenames: list[str] = []
+    content: str = ""
+    num_matches: int = 0
+    num_files: int = 0
+    truncated: bool = False
