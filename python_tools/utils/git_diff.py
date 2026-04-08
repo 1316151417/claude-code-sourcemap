@@ -1,22 +1,42 @@
 """Git diff utility functions for Claude Code Tools."""
 
+import difflib
 from typing import Optional
 
 
 def generate_patch(
-    original_content: str,
-    new_content: str,
-    file_path: Optional[str] = None
-) -> str:
-    """Generate a unified diff patch between two strings."""
-    import difflib
-    original_lines = original_content.splitlines(keepends=True)
+    file_path: str,
+    old_content: str,
+    new_content: str
+) -> dict:
+    """Generate a unified diff patch between two strings.
+
+    Returns a dict with:
+        - original: the original content
+        - updated: the new content
+        - patch: the unified diff patch string
+    """
+    original_lines = old_content.splitlines(keepends=True)
     new_lines = new_content.splitlines(keepends=True)
     diff = difflib.unified_diff(
         original_lines,
         new_lines,
-        fromfile=file_path or "original",
-        tofile=file_path or "modified",
+        fromfile=file_path,
+        tofile=file_path,
         lineterm=""
     )
-    return "".join(diff)
+    return {
+        "original": old_content,
+        "updated": new_content,
+        "patch": "".join(diff)
+    }
+
+
+def find_actual_string(content: str, search_string: str) -> Optional[str]:
+    """Find the search_string in content.
+
+    Returns the matched string if found, None otherwise.
+    """
+    if search_string in content:
+        return search_string
+    return None
