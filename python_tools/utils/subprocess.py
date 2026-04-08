@@ -1,5 +1,6 @@
 """Subprocess utility functions for Claude Code Tools."""
 
+import os
 import subprocess
 import shutil
 from typing import Optional, List
@@ -74,7 +75,8 @@ def run_ripgrep(
         raise RuntimeError(f"ripgrep failed: {result.stderr}")
 
     if output_mode == "files_with_matches":
-        filenames = [line.strip() for line in result.stdout.strip().split("\n") if line.strip()]
+        # Return basenames only, not full paths
+        filenames = [os.path.basename(line.strip()) for line in result.stdout.strip().split("\n") if line.strip()]
         num_files = len(filenames)
         # Check if results were truncated
         if head_limit is not None and num_files >= head_limit:
